@@ -1,0 +1,11 @@
+service: ssbu-tactics-note
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-1
+
+functions:
+  hello:
+    handler: handler.hello
