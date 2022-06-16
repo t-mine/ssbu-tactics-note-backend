@@ -9,7 +9,7 @@ npm install
 
 ```
 serverless deploy
-serverless deploy function -f anyfunction --stage dev
+serverless deploy function -f collectMovie --stage dev
 ```
 
 ## Remove resources

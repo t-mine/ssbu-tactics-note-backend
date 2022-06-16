@@ -1,11 +1,16 @@
 'use strict';
 
 const https = require('https');
+const { resolve } = require('path');
 
 const apiKey = process.env.YOUTUBE_API_KEY
 
-function getRequest() {
-  const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&type=video&part=snippet&q=dog`;
+const keywords = [
+  'ssbu'
+];
+
+function getRequest(keyword) {
+  const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&type=video&part=snippet&q=${keyword}`;
 
   return new Promise((resolve, reject) => {
     const req = https.get(url, res => {
@@ -32,13 +37,21 @@ function getRequest() {
 
 exports.handler = async (event) => {
   try {
-    const result = await getRequest();
-    console.log('result is:', result);
+    const results = await Promise.all(keywords.map(k => getRequest(k)));
 
+    console.log(`length:${results.length}`)
+    
+    results.forEach(result=>{
+      const items = result.items;
+      const videIds = items.map(item=>item.id.videoId);
+      console.log(videIds.join(','));
+    })
+    
     return {
       statusCode: 200,
-      body: JSON.stringify(result),
+      body: JSON.stringify(results),
     };
+
   } catch (error) {
     console.log('Error is:', error);
     return {
