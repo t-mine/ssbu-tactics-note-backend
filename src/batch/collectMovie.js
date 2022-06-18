@@ -6,11 +6,21 @@ const { resolve } = require('path');
 const apiKey = process.env.YOUTUBE_API_KEY
 
 const keywords = [
+  'マエスマ',
   'ssbu'
 ];
 
 function getRequest(keyword) {
-  const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&type=video&part=snippet&q=${keyword}`;
+
+  const params = {
+    key: apiKey,
+    type: 'video',
+    part: 'snippet',
+    q: keyword
+  }
+  // URLSearchParamsはエンコードもしてくれる
+  const urlSearchParam =  new URLSearchParams(params).toString();
+  const url = `https://www.googleapis.com/youtube/v3/search?${urlSearchParam}`;
 
   return new Promise((resolve, reject) => {
     const req = https.get(url, res => {
@@ -39,8 +49,6 @@ exports.handler = async (event) => {
   try {
     const results = await Promise.all(keywords.map(k => getRequest(k)));
 
-    console.log(`length:${results.length}`)
-    
     results.forEach(result=>{
       const items = result.items;
       const videIds = items.map(item=>item.id.videoId);
