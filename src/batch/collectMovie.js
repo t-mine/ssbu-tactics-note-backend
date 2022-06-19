@@ -12,11 +12,17 @@ const keywords = [
 
 function getRequest(keyword) {
 
+  const date = new Date();
+  // 1日前
+  date.setDate(date.getDate() - 1);
+
   const params = {
     key: apiKey,
     type: 'video',
     part: 'snippet',
-    q: keyword
+    q: keyword,
+    maxResults: 1000,
+    publishedAfter: date.toISOString()
   }
   // URLSearchParamsはエンコードもしてくれる
   const urlSearchParam =  new URLSearchParams(params).toString();
