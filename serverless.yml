@@ -6,6 +6,32 @@ provider:
   runtime: nodejs14.x
   region: ap-northeast-1
 
+plugins:
+  - serverless-plugin-additional-stacks
+custom:
+  # 再デプロイ時にDynamoDBが既に存在するというエラーを防ぐためにadditional-stacksを入れてる
+  # https://github.com/serverless/serverless/issues/3183
+  # https://github.com/nordcloud/serverless-plugin-additional-stacks
+  additionalStacks:
+    permanent:
+      Resources:
+        # https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html
+        UserDynamoDbTable:
+          Type: 'AWS::DynamoDB::Table'
+          #DeletionPolicy: Retain
+          Properties:
+            AttributeDefinitions:
+              - AttributeName: videoId
+                AttributeType: S
+            KeySchema:
+              - AttributeName: videoId
+                KeyType: HASH
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+            TableName: 'video'
+
 functions:
   collectMovie:
     handler: src/batch/collectMovie.handler
+

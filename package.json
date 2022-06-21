@@ -1,0 +1,22 @@
+{
+  "name": "ssbu-tactics-note-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eslintrc.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t-mine/ssbu-tactics-note-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/t-mine/ssbu-tactics-note-backend/issues"
+  },
+  "homepage": "https://github.com/t-mine/ssbu-tactics-note-backend#readme",
+  "devDependencies": {
+    "serverless-plugin-additional-stacks": "1.6.0"
+  }
+}
+

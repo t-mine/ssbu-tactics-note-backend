@@ -10,6 +10,12 @@ npm install
 ```
 serverless deploy
 serverless deploy function -f collectMovie --stage dev
+
+https://github.com/nordcloud/serverless-plugin-additional-stacks#command-line-usage
+serverless deploy additionalstacks
+serverless deploy additionalstacks --stack [stackname]
+serverless deploy --skip-additionalstacks
+
 ```
 
 ## Remove resources
