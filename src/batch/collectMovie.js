@@ -3,8 +3,9 @@
 const https = require('https');
 const { resolve } = require('path');
 
+const DynamoDb = require('../client/dynamoDBClient');
+const dynamoDb = DynamoDb.create();
 const apiKey = process.env.YOUTUBE_API_KEY;
-
 const keywords = ['マエスマ', 'ssbu'];
 
 function getRequest(keyword) {
@@ -51,11 +52,32 @@ exports.handler = async (event) => {
   try {
     const results = await Promise.all(keywords.map((k) => getRequest(k)));
 
-    results.forEach((result) => {
-      const items = result.items;
-      const videIds = items.map((item) => item.id.videoId);
-      console.log(videIds.join(','));
-    });
+    const videoIds = results.map((r) => r.items.map((item) => item.id.videoId)).flat();
+
+    console.log(videoIds.join(','));
+
+    const saveVideo = (videoId) => {
+      return new Promise((resolve, reject) => {
+        const params = {
+          TableName: 'video',
+          Item: {
+            videoId: videoId,
+          },
+        };
+        dynamoDb
+          .put(params)
+          .promise()
+          .then((r) => {
+            resolve();
+          })
+          .catch((e) => {
+            console.error('Unable to update item. Error JSON:', JSON.stringify(e, null, 2));
+            reject(e);
+          });
+      });
+    };
+
+    await Promise.all(videoIds.map((videoId) => saveVideo(videoId)));
 
     return {
       statusCode: 200,
