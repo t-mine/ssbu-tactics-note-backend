@@ -48,36 +48,35 @@ function getRequest(keyword) {
   });
 }
 
+const saveVideo = (video) => {
+  return new Promise((resolve, reject) => {
+    const params = {
+      TableName: 'video',
+      Item: {
+        videoId: video.id.videoId,
+        publishedAt: video.snippet.publishedAt,
+        title: video.snippet.title,
+        thumbnails: video.snippet.thumbnails,
+      },
+    };
+    dynamoDb
+      .put(params)
+      .promise()
+      .then((r) => {
+        resolve();
+      })
+      .catch((e) => {
+        console.error('Unable to update item. Error JSON:', JSON.stringify(e, null, 2));
+        reject(e);
+      });
+  });
+};
+
 exports.handler = async (event) => {
   try {
     const results = await Promise.all(keywords.map((k) => getRequest(k)));
-
-    const videoIds = results.map((r) => r.items.map((item) => item.id.videoId)).flat();
-
-    console.log(videoIds.join(','));
-
-    const saveVideo = (videoId) => {
-      return new Promise((resolve, reject) => {
-        const params = {
-          TableName: 'video',
-          Item: {
-            videoId: videoId,
-          },
-        };
-        dynamoDb
-          .put(params)
-          .promise()
-          .then((r) => {
-            resolve();
-          })
-          .catch((e) => {
-            console.error('Unable to update item. Error JSON:', JSON.stringify(e, null, 2));
-            reject(e);
-          });
-      });
-    };
-
-    await Promise.all(videoIds.map((videoId) => saveVideo(videoId)));
+    const videos = results.map((r) => r.items.map((video) => video)).flat();
+    await Promise.all(videos.map((video) => saveVideo(video)));
 
     return {
       statusCode: 200,
