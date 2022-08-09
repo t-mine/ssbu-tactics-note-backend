@@ -5,6 +5,9 @@ provider:
   name: aws
   runtime: nodejs14.x
   region: ap-northeast-1
+  apiGateway:
+    apiKeys:
+      - ssbuTacticsNoteApiKey
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -45,4 +48,12 @@ custom:
 functions:
   collectMovie:
     handler: src/batch/collectMovie.handler
+  getVideo:
+    handler: src/api/getVideo.handler
+    events:
+      - http:
+          path: video
+          method: get
+          cors: true
+          private: true
 
