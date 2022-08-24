@@ -13,7 +13,7 @@ module.exports.handler = async (event, context) => {
   // 検索
   let result;
   try {
-    result = await dynamoDb.query(params).promise();
+    result = await dynamoDb.scan(params).promise();
     console.log('検索結果 : ' + JSON.stringify(result));
   } catch (e) {
     console.log('DynamoDB検索失敗');
